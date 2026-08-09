@@ -1,0 +1,227 @@
+// Lineage 2 Server Ranking Platform — Supabase PostgreSQL
+// See PRD.md for business rules (BR-01 … BR-31)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum ServerStatus {
+  UPCOMING
+  ONLINE
+}
+
+enum PublicationStatus {
+  PUBLISHED
+  HIDDEN
+}
+
+// ---------------------------------------------------------------------------
+// Admins (Supabase Auth — id matches auth.users.id)
+// ---------------------------------------------------------------------------
+
+model User {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  role      UserRole @default(ADMIN)
+  isBlocked Boolean  @default(false) @map("is_blocked")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Dictionaries
+// ---------------------------------------------------------------------------
+
+model Chronicle {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  slug      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  servers ServerChronicle[]
+
+  @@index([isActive, sortOrder])
+  @@map("chronicles")
+}
+
+model ServerType {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  slug      String   @unique
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  servers Server[]
+
+  @@index([isActive, sortOrder])
+  @@map("server_types")
+}
+
+// ---------------------------------------------------------------------------
+// Server (central content entity)
+// ---------------------------------------------------------------------------
+
+model Server {
+  id                String            @id @default(uuid()) @db.Uuid
+  name              String
+  slug              String            @unique
+  logoUrl           String?           @map("logo_url")
+  shortDescription  String?           @map("short_description")
+  fullDescription   String?           @map("full_description") @db.Text
+  rateExp           Int               @map("rate_exp")
+  rateSp            Int               @map("rate_sp")
+  rateAdena         Int               @map("rate_adena")
+  rateDrop          Int               @map("rate_drop")
+  rateSpoil         Int               @map("rate_spoil")
+  openingDate       DateTime?         @map("opening_date") @db.Date
+  isOpeningSoon     Boolean           @default(false) @map("is_opening_soon")
+  status            ServerStatus      @default(UPCOMING)
+  publicationStatus PublicationStatus @default(HIDDEN) @map("publication_status")
+  regularPosition   Int?              @map("regular_position")
+  seoTitle          String?           @map("seo_title")
+  seoDescription    String?           @map("seo_description") @db.Text
+  ogImageUrl        String?           @map("og_image_url")
+  archivedAt        DateTime?         @map("archived_at")
+  serverTypeId      String            @map("server_type_id") @db.Uuid
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  serverType        ServerType         @relation(fields: [serverTypeId], references: [id])
+  chronicles        ServerChronicle[]
+  links             ServerLink[]
+  premiumBlocks     PremiumBlock[]
+  rankingPromotions RankingPromotion[]
+
+  @@index([publicationStatus, archivedAt])
+  @@index([status])
+  @@index([serverTypeId])
+  @@map("servers")
+}
+
+model ServerChronicle {
+  serverId    String @map("server_id") @db.Uuid
+  chronicleId String @map("chronicle_id") @db.Uuid
+
+  server    Server    @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  chronicle Chronicle @relation(fields: [chronicleId], references: [id], onDelete: Restrict)
+
+  @@id([serverId, chronicleId])
+  @@index([chronicleId])
+  @@map("server_chronicles")
+}
+
+model ServerLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  serverId  String   @map("server_id") @db.Uuid
+  label     String
+  url       String
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([serverId, sortOrder])
+  @@map("server_links")
+}
+
+// ---------------------------------------------------------------------------
+// Premium products (independent — BR-12, BR-13)
+// ---------------------------------------------------------------------------
+
+model PremiumBlock {
+  id        String   @id @default(uuid()) @db.Uuid
+  serverId  String   @map("server_id") @db.Uuid
+  position  Int
+  startAt   DateTime @map("start_at")
+  endAt     DateTime @map("end_at")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([isActive, startAt, endAt])
+  @@index([serverId])
+  @@index([position])
+  @@map("premium_blocks")
+}
+
+model RankingPromotion {
+  id        String   @id @default(uuid()) @db.Uuid
+  serverId  String   @map("server_id") @db.Uuid
+  position  Int
+  startAt   DateTime @map("start_at")
+  endAt     DateTime @map("end_at")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  server Server @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@index([isActive, startAt, endAt])
+  @@index([serverId])
+  @@index([position])
+  @@map("ranking_promotions")
+}
+
+// ---------------------------------------------------------------------------
+// Advertising
+// ---------------------------------------------------------------------------
+
+model AdPosition {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  slug      String   @unique
+  width     Int?
+  height    Int?
+  location  String
+  isActive  Boolean  @default(true) @map("is_active")
+  sortOrder Int      @default(0) @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  banners Banner[]
+
+  @@index([isActive, sortOrder])
+  @@map("ad_positions")
+}
+
+model Banner {
+  id           String   @id @default(uuid()) @db.Uuid
+  adPositionId String   @map("ad_position_id") @db.Uuid
+  imageUrl     String   @map("image_url")
+  targetUrl    String   @map("target_url")
+  altText      String?  @map("alt_text")
+  startAt      DateTime @map("start_at")
+  endAt        DateTime @map("end_at")
+  isActive     Boolean  @default(true) @map("is_active")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  adPosition AdPosition @relation(fields: [adPositionId], references: [id], onDelete: Cascade)
+
+  @@index([adPositionId, isActive, startAt, endAt])
+  @@map("banners")
+}
