@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
+import { AdminPageHeader } from "@/components/admin/AdminPageHeader";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { requireAuthenticatedAdmin } from "@/lib/auth/admin";
 
 export const metadata: Metadata = {
@@ -6,39 +9,65 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+const modules = [
+  {
+    title: "Servers",
+    description: "Create and edit server cards, rates, SEO, and links.",
+    href: "/admin/servers",
+  },
+  {
+    title: "Chronicles",
+    description: "Manage chronicle dictionary used in filters and server cards.",
+    href: "/admin/dictionaries/chronicles",
+  },
+  {
+    title: "Server Types",
+    description: "Manage server type dictionary (PvP, Low Rate, etc.).",
+    href: "/admin/dictionaries/server-types",
+  },
+  {
+    title: "Ranking",
+    description: "Stage 2: move servers up/down with auto-recalculation.",
+    href: null,
+  },
+  {
+    title: "Premium",
+    description: "Stage 2: premium block and ranking promotions.",
+    href: null,
+  },
+];
+
 export default async function AdminDashboardPage() {
   const admin = await requireAuthenticatedAdmin();
 
   return (
-    <section className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-semibold text-zinc-50">Dashboard</h1>
-        <p className="mt-2 text-zinc-400">
-          Welcome back, {admin.email}. Admin modules will be added in the next
-          steps.
-        </p>
-      </div>
+    <section className="space-y-8">
+      <AdminPageHeader
+        title="Dashboard"
+        description={`Welcome back, ${admin.email}.`}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <DashboardCard title="Servers" description="CRUD coming in step 5" />
-        <DashboardCard title="Ranking" description="Stage 2 module" />
-        <DashboardCard title="Premium" description="Stage 2 module" />
+        {modules.map((module) =>
+          module.href ? (
+            <Link key={module.title} href={module.href}>
+              <Card className="h-full transition hover:border-primary/40">
+                <CardHeader>
+                  <CardTitle>{module.title}</CardTitle>
+                  <CardDescription>{module.description}</CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
+          ) : (
+            <Card key={module.title} className="h-full opacity-70">
+              <CardHeader>
+                <CardTitle>{module.title}</CardTitle>
+                <CardDescription>{module.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          ),
+        )}
       </div>
     </section>
-  );
-}
-
-function DashboardCard({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-5">
-      <h2 className="text-lg font-medium text-zinc-100">{title}</h2>
-      <p className="mt-2 text-sm text-zinc-400">{description}</p>
-    </div>
   );
 }

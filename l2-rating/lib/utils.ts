@@ -1,12 +1,18 @@
-export function cn(...classes: Array<string | false | null | undefined>): string {
-  return classes.filter(Boolean).join(" ");
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
 
 export function formatRate(value: number): string {
   return `x${value.toLocaleString("en-US")}`;
 }
 
-export function formatOpeningDate(value: Date | null, isOpeningSoon: boolean): string {
+export function formatOpeningDate(
+  value: Date | null,
+  isOpeningSoon: boolean,
+): string {
   if (isOpeningSoon) {
     return "Opening soon";
   }
