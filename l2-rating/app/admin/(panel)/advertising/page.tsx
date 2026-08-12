@@ -9,7 +9,7 @@ import {
   AdPositionTable,
   BannerTable,
 } from "@/components/admin/AdvertisingTables";
-import { PUBLIC_AD_SLOT } from "@/lib/advertising/constants";
+import { PUBLIC_AD_SLOT_DEFINITIONS } from "@/lib/advertising/public-slots";
 import {
   getAdPositionsForAdmin,
   getBannersForAdmin,
@@ -39,9 +39,12 @@ export default async function AdminAdvertisingPage() {
 
       <div className="rounded-xl border border-border bg-muted/20 px-4 py-3 text-sm text-muted-foreground">
         <p className="font-medium text-foreground">Public slot slugs</p>
-        <p className="mt-1">
-          Homepage top: <code>{PUBLIC_AD_SLOT.homepageTop}</code> · Sidebar:{" "}
-          <code>{PUBLIC_AD_SLOT.homepageSidebar}</code>
+        <p className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+          {PUBLIC_AD_SLOT_DEFINITIONS.map((slot) => (
+            <span key={slot.slug}>
+              {slot.name}: <code>{slot.slug}</code>
+            </span>
+          ))}
         </p>
       </div>
 

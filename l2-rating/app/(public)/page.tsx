@@ -22,6 +22,8 @@ type HomePageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
+const homepageAdSlots = Object.values(PUBLIC_AD_SLOT);
+
 export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const filters = parseRankingFilters(params);
@@ -30,42 +32,52 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     getFilterOptions(),
     getPublishedServers(filters),
     getLivePremiumBlockServers(),
-    getLiveBannersBySlugs([
-      PUBLIC_AD_SLOT.homepageTop,
-      PUBLIC_AD_SLOT.homepageSidebar,
-    ]),
+    getLiveBannersBySlugs(homepageAdSlots),
   ]);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-[90rem] px-4 py-8 sm:px-6 lg:px-8">
       <AdBanner
         banner={adBanners[PUBLIC_AD_SLOT.homepageTop]}
         className="mb-6"
       />
-      <section className="mb-8 overflow-hidden rounded-3xl border border-amber-900/30 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_40%),linear-gradient(180deg,rgba(24,24,27,0.95),rgba(9,9,11,1))] px-6 py-10 sm:px-8">
-        <p className="text-sm uppercase tracking-[0.28em] text-amber-400/80">
-          Public ranking
-        </p>
-        <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
-          Find your next Lineage 2 server
-        </h1>
-        <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
-          Explore published servers sorted by admin-managed ranking. Filter by
-          chronicles, server type, rates, opening date, and status.
-        </p>
-      </section>
 
-      <PremiumBlock servers={premiumServers} />
-
-      <div className="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <div className="space-y-6">
-          <AdBanner banner={adBanners[PUBLIC_AD_SLOT.homepageSidebar]} />
-          <RankingFiltersPanel filters={filters} options={options} />
+      <div className="grid items-start gap-8 xl:grid-cols-[minmax(0,10rem)_minmax(0,1fr)_minmax(0,10rem)]">
+        <div className="sticky top-8 hidden xl:block">
+          <AdBanner banner={adBanners[PUBLIC_AD_SLOT.homepageLeft]} />
         </div>
-        <ServerRankingList
-          servers={servers}
-          hasActiveFilters={hasActiveFilters(filters)}
-        />
+
+        <div className="min-w-0 space-y-8">
+          <section className="overflow-hidden rounded-3xl border border-amber-900/30 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_40%),linear-gradient(180deg,rgba(24,24,27,0.95),rgba(9,9,11,1))] px-6 py-10 sm:px-8">
+            <p className="text-sm uppercase tracking-[0.28em] text-amber-400/80">
+              Public ranking
+            </p>
+            <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-50 sm:text-4xl">
+              Find your next Lineage 2 server
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-zinc-400">
+              Explore published servers sorted by admin-managed ranking. Filter by
+              chronicles, server type, rates, opening date, and status.
+            </p>
+          </section>
+
+          <PremiumBlock servers={premiumServers} />
+
+          <div className="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
+            <div className="space-y-6">
+              <AdBanner banner={adBanners[PUBLIC_AD_SLOT.homepageSidebar]} />
+              <RankingFiltersPanel filters={filters} options={options} />
+            </div>
+            <ServerRankingList
+              servers={servers}
+              hasActiveFilters={hasActiveFilters(filters)}
+            />
+          </div>
+        </div>
+
+        <div className="sticky top-8 hidden xl:block">
+          <AdBanner banner={adBanners[PUBLIC_AD_SLOT.homepageRight]} />
+        </div>
       </div>
     </div>
   );

@@ -157,6 +157,10 @@ export function AdPositionForm({
           />
         </div>
       </div>
+      <p className="text-sm text-muted-foreground">
+        Width and height control the rendered banner size on the public site.
+        Leave empty to use the image natural size within the slot container.
+      </p>
 
       <div className="space-y-2">
         <Label htmlFor="sortOrder">Sort order</Label>

@@ -20,6 +20,22 @@ export const PUBLIC_AD_SLOT_DEFINITIONS = [
     height: 250,
     sortOrder: 2,
   },
+  {
+    slug: PUBLIC_AD_SLOT.homepageLeft,
+    name: "Homepage left rail",
+    location: "Fixed left column beside main content on /",
+    width: 160,
+    height: 600,
+    sortOrder: 3,
+  },
+  {
+    slug: PUBLIC_AD_SLOT.homepageRight,
+    name: "Homepage right rail",
+    location: "Fixed right column beside main content on /",
+    width: 160,
+    height: 600,
+    sortOrder: 4,
+  },
 ] as const;
 
 const PUBLIC_AD_SLOT_SLUGS = new Set<string>(

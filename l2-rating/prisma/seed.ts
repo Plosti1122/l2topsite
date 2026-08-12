@@ -177,7 +177,7 @@ Experience mixed content from **Interlude** and **High Five** in a single progre
   }
 
   console.log(`Seeded ${chronicles.length} chronicles, 3 server types, ${servers.length} servers.`);
-  console.log("Ensured default ad positions for homepage-top and homepage-sidebar.");
+  console.log("Ensured default ad positions for homepage ad slots.");
 }
 
 main()

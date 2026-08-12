@@ -1,6 +1,8 @@
 export const PUBLIC_AD_SLOT = {
   homepageTop: "homepage-top",
   homepageSidebar: "homepage-sidebar",
+  homepageLeft: "homepage-left",
+  homepageRight: "homepage-right",
 } as const;
 
 export type PublicAdSlotSlug =
