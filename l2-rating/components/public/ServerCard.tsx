@@ -10,8 +10,20 @@ type ServerCardProps = {
 
 export function ServerCard({ server }: ServerCardProps) {
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-amber-900/30 bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-5 shadow-lg shadow-black/20 transition hover:border-amber-700/50">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/60 to-transparent" />
+    <article
+      className={`group relative overflow-hidden rounded-2xl border bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-5 shadow-lg shadow-black/20 transition ${
+        server.isRankingPromotion
+          ? "border-fuchsia-500/40 hover:border-fuchsia-400/60"
+          : "border-amber-900/30 hover:border-amber-700/50"
+      }`}
+    >
+      <div
+        className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${
+          server.isRankingPromotion
+            ? "via-fuchsia-400/70"
+            : "via-amber-500/60"
+        }`}
+      />
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
         <div className="flex items-start gap-4">
@@ -38,6 +50,11 @@ export function ServerCard({ server }: ServerCardProps) {
         <div className="min-w-0 flex-1 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-xl font-semibold text-zinc-50">{server.name}</h2>
+            {server.isRankingPromotion ? (
+              <span className="rounded-full border border-fuchsia-500/40 bg-fuchsia-500/10 px-2.5 py-0.5 text-xs font-medium text-fuchsia-200">
+                Promoted
+              </span>
+            ) : null}
             <ServerStatusBadge status={server.status} />
             <span className="rounded-full border border-zinc-700 px-2.5 py-0.5 text-xs text-zinc-300">
               {server.serverType.name}

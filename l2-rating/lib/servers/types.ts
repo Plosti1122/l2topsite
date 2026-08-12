@@ -39,6 +39,7 @@ export type PublicServerCard = {
     name: string;
     slug: string;
   }>;
+  isRankingPromotion?: boolean;
 };
 
 export type FilterOptions = {

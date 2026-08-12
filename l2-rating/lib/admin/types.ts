@@ -58,3 +58,48 @@ export type DictionaryOption = {
   name: string;
   slug: string;
 };
+
+export type RankingListItem = {
+  id: string;
+  name: string;
+  slug: string;
+  status: "UPCOMING" | "ONLINE";
+  regularPosition: number;
+  serverTypeName: string;
+};
+
+export type UnrankedPublishedServer = {
+  id: string;
+  name: string;
+  slug: string;
+  status: "UPCOMING" | "ONLINE";
+  serverTypeName: string;
+};
+
+export type PromoEntryListItem = {
+  id: string;
+  serverId: string;
+  serverName: string;
+  serverSlug: string;
+  position: number;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+  lifecycleStatus: "live" | "scheduled" | "expired" | "inactive";
+  productLabel: "Premium Block" | "Ranking Promotion";
+};
+
+export type PromoEntryFormData = {
+  id: string;
+  serverId: string;
+  position: number;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+};
+
+export type PromoServerOption = {
+  id: string;
+  name: string;
+  slug: string;
+};

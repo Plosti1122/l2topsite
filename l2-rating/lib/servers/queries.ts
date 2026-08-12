@@ -1,5 +1,10 @@
 import { Prisma, PublicationStatus } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
+import {
+  getLiveRankingPromotions,
+  mapPublicServerCard,
+  mergeServersWithRankingPromotions,
+} from "@/lib/servers/promotions";
 import type {
   FilterOptions,
   PublicServerCard,
@@ -97,35 +102,12 @@ function buildServerWhere(filters: RankingFilters): Prisma.ServerWhereInput {
   return where;
 }
 
-function mapServer(server: PublicServerRecord, index: number): PublicServerCard {
-  return {
-    id: server.id,
-    slug: server.slug,
-    name: server.name,
-    logoUrl: server.logoUrl,
-    shortDescription: server.shortDescription,
-    position: server.regularPosition ?? index + 1,
-    status: server.status,
-    isOpeningSoon: server.isOpeningSoon,
-    openingDate: server.openingDate,
-    rateExp: server.rateExp,
-    rateSp: server.rateSp,
-    rateAdena: server.rateAdena,
-    rateDrop: server.rateDrop,
-    rateSpoil: server.rateSpoil,
-    serverType: server.serverType,
-    chronicles: server.chronicles
-      .map((entry) => entry.chronicle)
-      .sort((a, b) => a.name.localeCompare(b.name)),
-  };
-}
-
 function mapServerDetail(
   server: PublicServerRecord,
   index: number,
 ): PublicServerDetail {
   return {
-    ...mapServer(server, index),
+    ...mapPublicServerCard(server, server.regularPosition ?? index + 1),
     fullDescription: server.fullDescription,
     seoTitle: server.seoTitle,
     seoDescription: server.seoDescription,
@@ -179,5 +161,7 @@ export async function getPublishedServers(
     orderBy: [{ regularPosition: "asc" }, { name: "asc" }],
   });
 
-  return servers.map(mapServer);
+  const promotions = await getLiveRankingPromotions(servers.map((server) => server.id));
+
+  return mergeServersWithRankingPromotions(servers, promotions);
 }

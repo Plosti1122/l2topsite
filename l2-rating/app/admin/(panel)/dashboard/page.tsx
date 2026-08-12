@@ -27,13 +27,13 @@ const modules = [
   },
   {
     title: "Ranking",
-    description: "Stage 2: move servers up/down with auto-recalculation.",
-    href: null,
+    description: "Move servers up/down and set positions with auto-recalculation.",
+    href: "/admin/ranking",
   },
   {
     title: "Premium",
-    description: "Stage 2: premium block and ranking promotions.",
-    href: null,
+    description: "Premium Block and Ranking Promotion slots (max 10 each).",
+    href: "/admin/premium",
   },
 ];
 

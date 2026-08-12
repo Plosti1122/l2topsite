@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import { PremiumBlock } from "@/components/public/PremiumBlock";
 import { RankingFiltersPanel } from "@/components/public/RankingFiltersPanel";
 import { ServerRankingList } from "@/components/public/ServerRankingList";
 import {
   hasActiveFilters,
   parseRankingFilters,
 } from "@/lib/servers/filters";
+import { getLivePremiumBlockServers } from "@/lib/servers/promotions";
 import { getFilterOptions, getPublishedServers } from "@/lib/servers/queries";
 
 export const metadata: Metadata = {
@@ -21,9 +23,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const filters = parseRankingFilters(params);
 
-  const [options, servers] = await Promise.all([
+  const [options, servers, premiumServers] = await Promise.all([
     getFilterOptions(),
     getPublishedServers(filters),
+    getLivePremiumBlockServers(),
   ]);
 
   return (
@@ -40,6 +43,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           chronicles, server type, rates, opening date, and status.
         </p>
       </section>
+
+      <PremiumBlock servers={premiumServers} />
 
       <div className="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
         <RankingFiltersPanel filters={filters} options={options} />
