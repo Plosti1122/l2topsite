@@ -152,6 +152,22 @@ export async function getFilterOptions(): Promise<FilterOptions> {
   return { chronicles, serverTypes };
 }
 
+export async function getPublishedServerSitemapEntries(): Promise<
+  Array<{ slug: string; updatedAt: Date }>
+> {
+  return prisma.server.findMany({
+    where: {
+      publicationStatus: PublicationStatus.PUBLISHED,
+      archivedAt: null,
+    },
+    select: {
+      slug: true,
+      updatedAt: true,
+    },
+    orderBy: { slug: "asc" },
+  });
+}
+
 export async function getPublishedServers(
   filters: RankingFilters,
 ): Promise<PublicServerCard[]> {

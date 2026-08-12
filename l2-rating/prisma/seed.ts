@@ -3,9 +3,12 @@ import {
   PublicationStatus,
   ServerStatus,
 } from "../generated/prisma/client";
+import { ensureDefaultAdPositions } from "@/lib/advertising/setup";
 import { prisma } from "../lib/prisma";
 
 async function main() {
+  await ensureDefaultAdPositions();
+
   await prisma.serverChronicle.deleteMany();
   await prisma.serverLink.deleteMany();
   await prisma.rankingPromotion.deleteMany();
@@ -174,6 +177,7 @@ Experience mixed content from **Interlude** and **High Five** in a single progre
   }
 
   console.log(`Seeded ${chronicles.length} chronicles, 3 server types, ${servers.length} servers.`);
+  console.log("Ensured default ad positions for homepage-top and homepage-sidebar.");
 }
 
 main()

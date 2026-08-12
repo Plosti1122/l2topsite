@@ -103,3 +103,64 @@ export type PromoServerOption = {
   name: string;
   slug: string;
 };
+
+export type ScheduleLifecycleStatus =
+  | "live"
+  | "scheduled"
+  | "expired"
+  | "inactive";
+
+export type AdPositionListItem = {
+  id: string;
+  name: string;
+  slug: string;
+  location: string;
+  width: number | null;
+  height: number | null;
+  isActive: boolean;
+  sortOrder: number;
+  bannerCount: number;
+};
+
+export type AdPositionFormData = {
+  id: string;
+  name: string;
+  slug: string;
+  location: string;
+  width: number | null;
+  height: number | null;
+  isActive: boolean;
+  sortOrder: number;
+};
+
+export type BannerListItem = {
+  id: string;
+  adPositionId: string;
+  adPositionName: string;
+  adPositionSlug: string;
+  imageUrl: string;
+  targetUrl: string;
+  altText: string | null;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+  lifecycleStatus: ScheduleLifecycleStatus;
+};
+
+export type BannerFormData = {
+  id: string;
+  adPositionId: string;
+  imageUrl: string;
+  targetUrl: string;
+  altText: string | null;
+  startAt: string;
+  endAt: string;
+  isActive: boolean;
+};
+
+export type AdPositionOption = {
+  id: string;
+  name: string;
+  slug: string;
+  location: string;
+};

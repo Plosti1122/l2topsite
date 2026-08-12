@@ -24,6 +24,7 @@ import { prisma } from "@/lib/prisma";
 function revalidateServerPaths() {
   revalidatePath("/admin/servers");
   revalidatePath("/");
+  revalidatePath("/sitemap.xml");
 }
 
 function isUniqueConstraintError(error: unknown): boolean {

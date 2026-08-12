@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { AdBanner } from "@/components/public/AdBanner";
 import { PremiumBlock } from "@/components/public/PremiumBlock";
 import { RankingFiltersPanel } from "@/components/public/RankingFiltersPanel";
 import { ServerRankingList } from "@/components/public/ServerRankingList";
+import { PUBLIC_AD_SLOT } from "@/lib/advertising/constants";
+import { getLiveBannersBySlugs } from "@/lib/advertising/queries";
 import {
   hasActiveFilters,
   parseRankingFilters,
@@ -23,14 +26,22 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   const params = await searchParams;
   const filters = parseRankingFilters(params);
 
-  const [options, servers, premiumServers] = await Promise.all([
+  const [options, servers, premiumServers, adBanners] = await Promise.all([
     getFilterOptions(),
     getPublishedServers(filters),
     getLivePremiumBlockServers(),
+    getLiveBannersBySlugs([
+      PUBLIC_AD_SLOT.homepageTop,
+      PUBLIC_AD_SLOT.homepageSidebar,
+    ]),
   ]);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <AdBanner
+        banner={adBanners[PUBLIC_AD_SLOT.homepageTop]}
+        className="mb-6"
+      />
       <section className="mb-8 overflow-hidden rounded-3xl border border-amber-900/30 bg-[radial-gradient(circle_at_top_left,rgba(245,158,11,0.16),transparent_40%),linear-gradient(180deg,rgba(24,24,27,0.95),rgba(9,9,11,1))] px-6 py-10 sm:px-8">
         <p className="text-sm uppercase tracking-[0.28em] text-amber-400/80">
           Public ranking
@@ -47,7 +58,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <PremiumBlock servers={premiumServers} />
 
       <div className="grid gap-8 xl:grid-cols-[360px_minmax(0,1fr)]">
-        <RankingFiltersPanel filters={filters} options={options} />
+        <div className="space-y-6">
+          <AdBanner banner={adBanners[PUBLIC_AD_SLOT.homepageSidebar]} />
+          <RankingFiltersPanel filters={filters} options={options} />
+        </div>
         <ServerRankingList
           servers={servers}
           hasActiveFilters={hasActiveFilters(filters)}

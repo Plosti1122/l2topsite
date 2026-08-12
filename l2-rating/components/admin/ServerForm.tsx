@@ -11,7 +11,9 @@ import type {
   ServerLinkInput,
 } from "@/lib/admin/types";
 import { slugify } from "@/lib/admin/slug";
+import { MEDIA_FOLDERS } from "@/lib/storage/constants";
 import { DeleteConfirmButton } from "@/components/admin/DeleteConfirmButton";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -260,13 +262,14 @@ export function ServerForm({
             </div>
           </div>
 
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="logoUrl">Logo URL</Label>
-            <Input
+          <div className="md:col-span-2">
+            <ImageUploadField
               id="logoUrl"
-              type="url"
+              label="Logo"
+              description="Shown on server cards and detail pages."
               value={logoUrl}
-              onChange={(event) => setLogoUrl(event.target.value)}
+              onChange={setLogoUrl}
+              folder={MEDIA_FOLDERS.logos}
             />
           </div>
 
@@ -415,15 +418,14 @@ export function ServerForm({
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="ogImageUrl">Open Graph image URL</Label>
-            <Input
-              id="ogImageUrl"
-              type="url"
-              value={ogImageUrl}
-              onChange={(event) => setOgImageUrl(event.target.value)}
-            />
-          </div>
+          <ImageUploadField
+            id="ogImageUrl"
+            label="Open Graph image"
+            description="Used for social previews. Falls back to the logo when empty."
+            value={ogImageUrl}
+            onChange={setOgImageUrl}
+            folder={MEDIA_FOLDERS.ogImages}
+          />
         </CardContent>
       </Card>
 

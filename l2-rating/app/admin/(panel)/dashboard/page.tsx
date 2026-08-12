@@ -35,6 +35,11 @@ const modules = [
     description: "Premium Block and Ranking Promotion slots (max 10 each).",
     href: "/admin/premium",
   },
+  {
+    title: "Advertising",
+    description: "Ad positions, banner schedules, and homepage slots.",
+    href: "/admin/advertising",
+  },
 ];
 
 export default async function AdminDashboardPage() {
